@@ -1,0 +1,51 @@
+@charset "UTF-8";
+@font-face {
+  font-family: 'Noto Sans CJK';
+  font-style: normal;
+  font-weight: 400;
+  src: local("Noto Sans CJK JP"), url(//fonts.gstatic.com/ea/notosansjp/v5/NotoSansJP-Regular.woff2) format("woff2"), url(//fonts.gstatic.com/ea/notosansjp/v5/NotoSansJP-Regular.woff) format("woff"), url(//fonts.gstatic.com/ea/notosansjp/v5/NotoSansJP-Regular.otf) format("opentype");
+}
+
+.ryma-token-thumbnail{
+  max-width:50px;
+  max-height:50px;
+}
+
+.ryma-token-thumbnail-lx{
+  max-width:200px;
+  max-height:200px;
+}
+
+.ryma-btn-cursor{
+  cursor: pointer;
+}
+
+video {
+  width: 100%;
+  height: auto;
+}
+
+audio {
+  width: 100%;
+}
+
+.modal_custom {
+  display: none;
+  background-color:rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}
+
+.navbar-brand .d-inline-block > h3 {
+  font-weight: bold;
+  color: white;
+}
+
+td.text-center >a {
+  margin-right: 10px;
+}
+
+td.text-center >img {
+  width: 150px;
+  height: 150px;
+  border-radius: 10px;
+}

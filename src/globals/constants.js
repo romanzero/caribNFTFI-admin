@@ -1,0 +1,26 @@
+var SELECTED_SIDEBAR = {
+    USERS: 1,
+    PROJECTS: 2,
+    CONTRACTS: 3,
+    TOKENS: 4
+};
+
+var OFFER_STATUS = {
+    PENDING: 0,
+    ACCEPTED: 1,
+    CANCELLED: 2,
+    PAYED_BACK:3,
+    OVER_DUE: 4
+};
+
+var TOKEN_MATERIAL_TYPE = {
+    NONE: 0,
+    IMAGE: 1,
+    VIDEO: 2
+}
+
+module.exports = {
+    SELECTED_SIDEBAR,
+    OFFER_STATUS,
+    TOKEN_MATERIAL_TYPE
+}
