@@ -57,7 +57,7 @@ class UserList extends React.Component {
     getUsers(name = '', address = '') {
         this.showLoading();
         API.get_users(name, address)
-        .then((res) => {
+        .then((res) => {console.log(res);
             this.hideLoading();
             if (res.result) {
                 this.setState({

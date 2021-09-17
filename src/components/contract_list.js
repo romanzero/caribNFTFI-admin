@@ -4,6 +4,10 @@ import LoadingOverlay from "react-loading-overlay";
 import styled, { css } from "styled-components";
 import API from '../adapter/api';
 import $ from 'jquery';
+import CONST from '../globals/constants';
+import config from '../globals/config';
+import Web3 from 'web3';
+import NFTFI from '../contracts/NFTFI.json'
 
 const DarkBackground = styled.div`
   display: none; /* Hidden by default */
@@ -128,6 +132,78 @@ class ContractList extends React.Component {
         })
     }
 
+    isConnected() {
+        if (window.ethereum == undefined) {
+            swal('Please install MetaMask.');
+            return false;
+        }
+
+        const web3 = new Web3(Web3.givenProvider);
+
+        var selectedAddress = web3.givenProvider.selectedAddress;
+        if (selectedAddress == null) {
+            swal(
+                'Please connect the wallet. Do you want to connect?',
+                {
+                    buttons: ["Cancel", "Connect"]
+                }
+            )
+            .then((res) => {
+                if (res == true) {
+                    this.handleConnect();
+                }
+            })
+            return false;
+        }
+
+        if (Web3.utils.toChecksumAddress(selectedAddress) != config.admin_address) {
+            swal('Please connect with administrator wallet.');
+            return false;
+        }
+
+        if (web3.givenProvider.chainId != config.chain_id) {
+            swal('Please select BSC Mainnet on MetaMask.');
+            return false;
+        }
+
+        return true;
+    }
+
+    handleConnect() {
+        window.ethereum.enable()
+        .then((res) => {
+            var connected = false;
+
+            for (var i = 0; i < res.length; i++) {
+                if (Web3.utils.toChecksumAddress(res[i]) == config.admin_address) {
+                    connected = true;
+                    break;
+                }
+            }
+
+            if (!connected) {
+                swal('Please connect with administrator wallet.');
+            }
+        })
+        .catch((err) => {
+            console.log(err);
+            swal('An error occured while connecting wallet.');
+        })
+    }
+
+    handleWhiteList(address, white_listed) {
+        if (!this.isConnected()) return;
+
+        const web3 = new Web3(Web3.givenProvider);
+        const contract_nftfi = new web3.eth.Contract(NFTFI, config.contract_nftfi);
+        contract_nftfi.methods.whitelistNFTContract(address, white_listed).send({from: config.admin_address})
+        .on('error', () => swal('An error occured.'))
+        .then((res) => {
+            console.log(res);
+            document.location.reload();
+        })
+    }
+
     render() {
         var style_hidden = {display: 'none'};
         return (
@@ -232,6 +308,7 @@ class ContractList extends React.Component {
                                         <th className="text-center">Name</th>
                                         <th className="text-center">Project</th>
                                         <th className="text-center">Tokens</th>
+                                        <th className="text-center">Status</th>
                                         <th className="text-center"></th>
                                     </tr>
                                 </thead>
@@ -244,8 +321,11 @@ class ContractList extends React.Component {
                                                     <td className="text-center">{item.name}</td>
                                                     <td className="text-center">{item.project_name == null? "Unknown": item.project_name}</td>
                                                     <td className="text-center">{item.token_cnt} Tokens</td>
+                                                    <td className="text-center">{item.status == CONST.CONTRACT_STATUS.BLACK_LISTED? "Blocked": "WHITE LISTED"}</td>
                                                     <td className="text-center">
                                                         <a href={"/contract_update?id=" + item.id}><i class="fas fa-edit"></i></a>
+                                                        <a href="#" onClick={() => this.handleWhiteList(item.address, false)} style={item.status == CONST.CONTRACT_STATUS.BLACK_LISTED? style_hidden: {}}><i class="fas fa-lock"></i></a>
+                                                        <a href="#" onClick={() => this.handleWhiteList(item.address, true)} style={item.status == CONST.CONTRACT_STATUS.WHITE_LISTED? style_hidden: {}}><i class="fas fa-lock-open"></i></a>
                                                         <a href="#" onClick={() => this.handleDelete(item)}><i class="fas fa-trash-alt"></i></a>
                                                     </td>
                                                 </tr>
